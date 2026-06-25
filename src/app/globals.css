@@ -1,26 +1,197 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: #050505;
+  --color-coal: #0b0b09;
+  --color-panel: #14130f;
+  --color-paper: #ece8dc;
+  --color-cream: #f4f1e8;
+  --color-mist: #aba79a;
+  --color-gold: #f5b400;
+  --color-gold-soft: #ffd45a;
+  --font-display: var(--font-display-active);
+  --font-body: var(--font-body-active);
+  --font-mono: var(--font-plex-mono);
+  --font-signature: var(--font-great-vibes);
+  --ease-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --font-display-active: var(--font-unbounded);
+  --font-body-active: var(--font-hanken);
+}
+
+/* Arabic + Sorani render with Noto faces; Unbounded has no Arabic glyphs. */
+:root[dir="rtl"] {
+  --font-display-active: var(--font-kufi);
+  --font-body-active: var(--font-noto-ar);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Mono eyebrow label — letter-spacing is wrong for Arabic script, reset in RTL */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--color-gold);
+}
+
+:root[dir="rtl"] .eyebrow {
+  letter-spacing: 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+:root[dir="rtl"] .tracking-\[0\.24em\],
+:root[dir="rtl"] .tracking-\[0\.2em\] {
+  letter-spacing: 0 !important;
+}
+
+/* Thin brand scrollbar */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 180, 0, 0.45) #0b0b09;
+}
+::-webkit-scrollbar {
+  width: 9px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0b09;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(245, 180, 0, 0.35);
+  border-radius: 99px;
+  border: 2px solid #0b0b09;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 180, 0, 0.6);
+}
+
+/* Blueprint dot grids — section texture */
+.bg-dots-dark {
+  background-image: radial-gradient(
+    rgba(244, 241, 232, 0.07) 1px,
+    transparent 1px
+  );
+  background-size: 26px 26px;
+}
+.bg-dots-light {
+  background-image: radial-gradient(rgba(5, 5, 5, 0.09) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* Outlined ghost type (footer wordmark, process numerals) */
+.ghost-stroke {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(244, 241, 232, 0.13);
+}
+.ghost-stroke-dark {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(5, 5, 5, 0.16);
+}
+
+/* Console skeleton shimmer */
+@keyframes shimmer {
+  from {
+    transform: translateX(-160%);
+  }
+  to {
+    transform: translateX(420%);
+  }
+}
+:root[dir="rtl"] .animate-shimmer {
+  animation-direction: reverse;
+}
+.animate-shimmer {
+  animation: shimmer 2.4s cubic-bezier(0.77, 0, 0.175, 1) infinite;
+}
+
+/* Film grain — fixed overlay only (never on scrolling containers) */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Integration marquee — direction-locked, decorative */
+.marquee {
+  direction: ltr;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+.marquee-inner {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Native accordion polish */
+details.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+details.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+details.faq-item .faq-chevron {
+  transition: transform 220ms var(--ease-strong);
+}
+
+details.faq-item[open] .faq-chevron {
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee-inner {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
